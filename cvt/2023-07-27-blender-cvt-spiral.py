@@ -6,18 +6,19 @@ radiusOnBottom = 40
 numberOfTreads = 8
 lengthOfGear = 40
 
-heightOfTread = 2
+heightOfTread = 0.5
 widthOfTread = 2
 
-arcDistancePerTreadAndRecess = (radiusOnTop**2 * math.pi) / numberOfTreads
+arcDistancePerTreadAndRecess = (2 * radiusOnTop * math.pi) / numberOfTreads
 arcPercentageForTopOfTread = widthOfTread / arcDistancePerTreadAndRecess 
 
-
+print(arcDistancePerTreadAndRecess)
+print(arcPercentageForTopOfTread)
 
 #numberOfXYDefinitionPoints = 20
-#numberOfZDefinitionPoints = 40
+numberOfZDefinitionPoints = 10
 
-numberOfZDefinitionPoints = 1
+#numberOfZDefinitionPoints = 1
 
 #def positionOfXYOfTreadAtZ(z=0,treadNumber=0,isTread=False):
 #    return 
@@ -27,20 +28,24 @@ numberOfZDefinitionPoints = 1
 cvt = []
 
 
-radiusSlopePerNumberOfZDefintionPoints = (radiusOnBottom - radiusOnTop) / lengthOfGear
+radiusSlopePerNumberOfZDefintionPoints = (radiusOnBottom - radiusOnTop)
 
 for z in range(numberOfZDefinitionPoints):
-    currentRadius = treadRecessHeight = radiusOnTop + z*radiusSlopePerNumberOfZDefintionPoints
+    currentRadius = treadRecessHeight = radiusOnTop + (z/numberOfZDefinitionPoints)*radiusSlopePerNumberOfZDefintionPoints
     treadHeight = treadRecessHeight + heightOfTread
     for t in range(numberOfTreads):
-        p1 = [treadRecessHeight * math.cos((math.pi/numberOfTreads) * t),
-              treadRecessHeight * math.sin((math.pi/numberOfTreads) * t)]
-        p2 = [treadHeight * math.cos((math.pi/numberOfTreads) * t),
-              treadHeight * math.sin((math.pi/numberOfTreads) * t)]
-        p3 = [treadHeight * math.cos((math.pi/numberOfTreads) * (t + arcPercentageForTopOfTread)),
-              treadHeight * math.sin((math.pi/numberOfTreads) * (t + arcPercentageForTopOfTread))]
-        p4 = [treadRecessHeight * math.cos((math.pi/numberOfTreads) * (t + arcPercentageForTopOfTread)),
-                                           treadRecessHeight * math.sin((math.pi/numberOfTreads) * (t + arcPercentageForTopOfTread))]
+        p1 = [treadRecessHeight * math.cos(((2*math.pi)/numberOfTreads) * t),
+              treadRecessHeight * math.sin(((2*math.pi)/numberOfTreads) * t),
+              (z/numberOfZDefinitionPoints)*lengthOfGear]
+        p2 = [treadHeight * math.cos(((2*math.pi)/numberOfTreads) * t),
+              treadHeight * math.sin(((2*math.pi)/numberOfTreads) * t),
+              (z/numberOfZDefinitionPoints)*lengthOfGear]
+        p3 = [treadHeight * math.cos(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+              treadHeight * math.sin(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+              (z/numberOfZDefinitionPoints)*lengthOfGear]
+        p4 = [treadRecessHeight * math.cos(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+                                           treadRecessHeight * math.sin(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+              (z/numberOfZDefinitionPoints)*lengthOfGear]
 
         cvt.append(p1)
         cvt.append(p2)
