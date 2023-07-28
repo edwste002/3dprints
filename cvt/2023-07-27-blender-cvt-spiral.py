@@ -27,24 +27,37 @@ numberOfZDefinitionPoints = 10
 
 cvt = []
 
-
 radiusSlopePerNumberOfZDefintionPoints = (radiusOnBottom - radiusOnTop)
+
+def getArcLength(arcDistancePerTreadAndRecess, currentRadius):
+    getCurrentCircumferencePercentage = arcDistancePerTreadAndRecess / (2 * currentRadius * math.pi)
+    return getCurrentCircumferencePercentage
+
+def makePointsAlongArc(currentRadius,numberOfPoints,thetaStart,thetaEnd):
+    l=[]
+    thetaStep = (thetaEnd - thetaStart) / numberOfPoints
+    for i in range(numberOfPoints):
+        ll=[currentRadius * math.cos(thetaStart + thetaStep*i),
+              currentRadius * math.sin(thetaStart + thetaStep*i),
+              (z/numberOfZDefinitionPoints)*lengthOfGear]
+        l.append(ll)
 
 for z in range(numberOfZDefinitionPoints):
     currentRadius = treadRecessHeight = radiusOnTop + (z/numberOfZDefinitionPoints)*radiusSlopePerNumberOfZDefintionPoints
     treadHeight = treadRecessHeight + heightOfTread
-    for t in range(numberOfTreads):
-        p1 = [treadRecessHeight * math.cos(((2*math.pi)/numberOfTreads) * t),
-              treadRecessHeight * math.sin(((2*math.pi)/numberOfTreads) * t),
+    getCurrentCircumferencePercentage = getArcLength(arcDistancePerTreadAndRecess, currentRadius)
+    for t in range(numberOfTreads): 
+        p1 = [treadRecessHeight * math.cos(((2*math.pi)*getCurrentCircumferencePercentage*t)),
+              treadRecessHeight * math.sin(((2*math.pi)*getCurrentCircumferencePercentage*t)),
               (z/numberOfZDefinitionPoints)*lengthOfGear]
-        p2 = [treadHeight * math.cos(((2*math.pi)/numberOfTreads) * t),
-              treadHeight * math.sin(((2*math.pi)/numberOfTreads) * t),
+        p2 = [treadHeight * math.cos(((2*math.pi)*getCurrentCircumferencePercentage*t)),
+              treadHeight * math.sin(((2*math.pi)*getCurrentCircumferencePercentage*t)),
               (z/numberOfZDefinitionPoints)*lengthOfGear]
-        p3 = [treadHeight * math.cos(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
-              treadHeight * math.sin(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+        p3 = [treadHeight * math.cos(((2*math.pi)*getCurrentCircumferencePercentage*(t+arcPercentageForTopOfTread))),
+              treadHeight * math.sin(((2*math.pi)*getCurrentCircumferencePercentage*(t+arcPercentageForTopOfTread))),
               (z/numberOfZDefinitionPoints)*lengthOfGear]
-        p4 = [treadRecessHeight * math.cos(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
-                                           treadRecessHeight * math.sin(((2*math.pi)/numberOfTreads) * (t + arcPercentageForTopOfTread)),
+        p4 = [treadRecessHeight * math.cos(((2*math.pi)*getCurrentCircumferencePercentage*(t+arcPercentageForTopOfTread))),
+              treadRecessHeight * math.sin(((2*math.pi)*getCurrentCircumferencePercentage*(t+arcPercentageForTopOfTread))),
               (z/numberOfZDefinitionPoints)*lengthOfGear]
 
         cvt.append(p1)
