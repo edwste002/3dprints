@@ -42,6 +42,7 @@ def getArcRatio(arcDistancePerTreadAndRecess, currentRadius):
 def makePointsAlongArc(currentRadius,numberOfPoints,thetaStart,thetaEnd):
     l=[]
     thetaStep = (thetaEnd - thetaStart) / numberOfPoints
+    #print('thetaStart,thetaStep,thetaEnd')
     #print(thetaStart,thetaStep,thetaEnd)
     for i in range(numberOfPoints):
         ll=[currentRadius * math.cos(thetaStart + thetaStep*i),
@@ -58,16 +59,22 @@ for z in range(numberOfZDefinitionPoints):
     currentRadius = treadRecessHeight = radiusOnTop + (z/numberOfZDefinitionPoints)*radiusSlopePerNumberOfZDefintionPoints
     treadHeight = treadRecessHeight + heightOfTread
     getCurrentCircumferencePercentage = getArcRatio(arcDistancePerTreadAndRecess, currentRadius)
+    getCurrentCircumferencePercentageOnTread = getArcRatio(arcDistancePerTreadAndRecess, treadHeight)
     for t in range(numberOfTreads):
+        #print('-----------------'+str(t)+'----------------------------'+str(getCurrentCircumferencePercentageOnTread)+' ' + str(treadHeight))
         cvt = cvt + makePointsAlongArc(currentRadius,
                                        numberOfPointsOnRecessedArc,
                                        (2*math.pi)*getCurrentCircumferencePercentage*t,
-                                       (2*math.pi)*getCurrentCircumferencePercentage*t + (2*math.pi)*getCurrentCircumferencePercentage*arcPercentageForRecessOfTread)
-                                        
+                                       (2*math.pi)*getCurrentCircumferencePercentage*t + (2*math.pi)*(arcPercentageForRecessOfTread))
+
+        distance =  (((2*math.pi)*getCurrentCircumferencePercentageOnTread*(t+1)) - ((2*math.pi)*getCurrentCircumferencePercentageOnTread*t + (2*math.pi)*getCurrentCircumferencePercentageOnTread))/numberOfPointsOnTread
+        #print('non-recessed')
+        #print(distance)
         cvt = cvt + makePointsAlongArc(treadHeight,
                                        numberOfPointsOnTread,
-                                       (2*math.pi)*getCurrentCircumferencePercentage*t + (2*math.pi)*getCurrentCircumferencePercentage*arcPercentageForRecessOfTread,
-                                        (2*math.pi)*getCurrentCircumferencePercentage*(t+1))
+                                       (2*math.pi)*getCurrentCircumferencePercentage*t + (2*math.pi)*(arcPercentageForRecessOfTread),
+                                       (2*math.pi)*getCurrentCircumferencePercentage*(t+2)
+                                        )
 
 
 print(cvt)
