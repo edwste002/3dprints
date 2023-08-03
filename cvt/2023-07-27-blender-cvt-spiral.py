@@ -9,19 +9,18 @@ def print_to_string(*args, **kwargs):
     output.close()
     return contents
 
-radiusOnTop = 20
-radiusOnBottom = 40
+radiusOnTop = 40
+radiusOnBottom = 80
 
 numberOfTreads = 8
-lengthOfGear = 40
 
 numberOfPointsOnRecessedArc = 8
 numberOfPointsOnTread = 3
 
-heightOfTread = 0.5
+heightOfTread = 3
 widthOfTread = 2
 
-numberOfZDefinitionPoints = 10
+numberOfZDefinitionPoints = 15
 
 topRadiusArcDistancePerTread = widthOfTread
 
@@ -73,7 +72,10 @@ def makePointsAlongArc(currentRadius,numberOfPoints,thetaStart,thetaEnd,currentZ
     return l
 
 
-cvt = []
+cvtLayers = []
+cvtSections = []
+
+
 for z in range(numberOfZDefinitionPoints+1):
     #print('----z-----')
     currentRadius = treadRecessHeight = radiusOnTop + z*radiusSlopePerNumberOfZDefintionPoints
@@ -81,18 +83,50 @@ for z in range(numberOfZDefinitionPoints+1):
     getCurrentCircumferenceTreadAndRecessPercentage = getArcRatio(topRadiusArcDistancePerTreadAndRecess, currentRadius)
     getCurrentCircumferenceTreadPercentage = getArcRatio(topRadiusArcDistancePerTread, currentRadius)
     getCurrentCircumferenceTreadRecessPercentage = getArcRatio(topRadiusArcDistancePerRecess, currentRadius)
-
+    cvtSections = []
     #print(getCurrentCircumferenceTreadAndRecessPercentage,getCurrentCircumferenceTreadPercentage,getCurrentCircumferenceTreadRecessPercentage)
     #print('getCurrentCircumferenceTreadAndRecessPercentage,getCurrentCircumferenceTreadPercentage,getCurrentCircumferenceTreadRecessPercentage')
     for t in range(numberOfTreads):
         #print('-----------------'+str(t)+'----------------------------'+str(getCurrentCircumferencePercentageOnTread)+' ' + str(treadHeight))
-        cvt = cvt + makePointsAlongArc(treadHeight,numberOfPointsOnTread,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t + (2*math.pi) * getCurrentCircumferenceTreadPercentage,currentRadius)
-        cvt = cvt + makePointsAlongArc(currentRadius,numberOfPointsOnRecessedArc,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t + (2*math.pi) * getCurrentCircumferenceTreadPercentage,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*(t+1),currentRadius)
+        m = makePointsAlongArc(treadHeight,numberOfPointsOnTread,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t + (2*math.pi) * getCurrentCircumferenceTreadPercentage,currentRadius)
+        cvtSections.append(m)
+        m = makePointsAlongArc(currentRadius,numberOfPointsOnRecessedArc,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*t + (2*math.pi) * getCurrentCircumferenceTreadPercentage,(2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*(t+1),currentRadius)
+        cvtSections.append(m)
+        
     #add other side to this
     if not z==0:
-        cvt = cvt + makePointsAlongArc(currentRadius,numberOfPointsOnTread + numberOfPointsOnRecessedArc, (2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*(numberOfTreads+1),0,currentRadius)
+        m = makePointsAlongArc(currentRadius,numberOfPointsOnTread + numberOfPointsOnRecessedArc, (2*math.pi) * getCurrentCircumferenceTreadAndRecessPercentage*(numberOfTreads+1),0,currentRadius)
+        cvtSections.append(m)
+    else:
+        #need special case on top layer
+        #add same point
+        lastpiece = []
+        for i in range(numberOfPointsOnTread + numberOfPointsOnRecessedArc):
+            lastpiece.append(m[-1])
+        cvtSections.append(lastpiece)
+    cvtLayers.append(cvtSections)
 
+cvt = []
+#print(cvtLayers)
+#make square patterns with widget creation
+for i,vnt in enumerate(cvtLayers):
+    #each tread section
+    if not i == len(cvtLayers) - 1:
+        for j, vcs in enumerate(vnt):
+            #for each tread section
+        
+            for k, vs in enumerate(vcs):
+            #print(len(vcs))
+                if not k == len(vcs) - 1:
+                
+            #print(i,j,k)
+            #print(((cvtLayers[i])[j])[k])
+                    cvt.append(((cvtLayers[i])[j])[k])
+                    cvt.append(((cvtLayers[i])[j])[k+1])
+                    cvt.append(((cvtLayers[i+1])[j])[k+1])
+                    cvt.append(((cvtLayers[i+1])[j])[k])
 
+            
 with open('output.txt','w') as f:
     s = print_to_string(cvt)
     f.write(s)
