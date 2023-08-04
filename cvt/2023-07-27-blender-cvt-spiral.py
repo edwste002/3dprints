@@ -23,7 +23,6 @@ widthOfTread = 2
 numberOfZDefinitionPoints = 15
 
 topRadiusArcDistancePerTread = widthOfTread
-
 topRadiusArcDistancePerRecess = ((2 * radiusOnTop * math.pi) - (numberOfTreads * widthOfTread)) / (numberOfTreads)
 
 #calculate recess based on tread length
@@ -32,15 +31,7 @@ arcPercentageForTopRadiusTreadAndRecess = (2 * math.pi) / numberOfTreads
 arcPercentageForTopRadiusTread = widthOfTread / topRadiusArcDistancePerTreadAndRecess
 arcPercentageForTopRecessOfTread = arcPercentageForTopRadiusTreadAndRecess - arcPercentageForTopRadiusTread
 
-
 radiusSlopePerNumberOfZDefintionPoints = (radiusOnBottom - radiusOnTop) / numberOfZDefinitionPoints
-
-#print('topRadiusArcDistancePerTreadAndRecess,topRadiusArcDistancePerTread,topRadiusArcDistancePerRecess')
-#print(topRadiusArcDistancePerTreadAndRecess,topRadiusArcDistancePerTread,topRadiusArcDistancePerRecess)
-
-#print('arcPercentageForTopRadiusTreadAndRecess,arcPercentageForTopRadiusTread,arcPercentageForTopRecessOfTread')
-#print(arcPercentageForTopRadiusTreadAndRecess,arcPercentageForTopRadiusTread,arcPercentageForTopRecessOfTread)
-
 
 cvt = []
 
@@ -71,10 +62,8 @@ def makePointsAlongArc(currentRadius,numberOfPoints,thetaStart,thetaEnd,currentZ
     #print(l)
     return l
 
-
 cvtLayers = []
 cvtSections = []
-
 
 for z in range(numberOfZDefinitionPoints+1):
     #print('----z-----')
@@ -114,6 +103,7 @@ for i,vnt in enumerate(cvtLayers):
     if not i == len(cvtLayers) - 1:
         for j, vcs in enumerate(vnt):
             #for each tread section
+
         
             for k, vs in enumerate(vcs):
             #print(len(vcs))
@@ -121,11 +111,15 @@ for i,vnt in enumerate(cvtLayers):
                 
             #print(i,j,k)
             #print(((cvtLayers[i])[j])[k])
-                    cvt.append(((cvtLayers[i])[j])[k])
-                    cvt.append(((cvtLayers[i])[j])[k+1])
-                    cvt.append(((cvtLayers[i+1])[j])[k+1])
-                    cvt.append(((cvtLayers[i+1])[j])[k])
+                    cvt.append([((cvtLayers[i])[j])[k],((cvtLayers[i])[j])[k+1],
+                            ((cvtLayers[i+1])[j])[k+1],((cvtLayers[i+1])[j])[k]])
 
+            if not j == len(vnt) - 1:
+                #print(i,j,k)
+                cvt.append([((cvtLayers[i])[j])[-1],((cvtLayers[i])[j+1])[0],
+                            ((cvtLayers[i+1])[j+1])[0],((cvtLayers[i+1])[j])[-1]])
+
+                
             
 with open('output.txt','w') as f:
     s = print_to_string(cvt)
